@@ -1,17 +1,17 @@
-"use client";
-
-import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import Logo from "@/components/Logo";
 import OnboardingForm from "@/components/forms/OnboardingForm";
 import Navbar from "@/components/Navbar";
+import { getFullMongoUser } from "@/lib/helpers/auth";
+import { redirect } from "next/navigation";
 
-export default function OnboardingPage() {
-  const { isLoaded } = useUser();
+export default async function OnboardingPage() {
+  const dbUser = await getFullMongoUser();
 
-  // Hydration issues se bachane ke liye jab tak clerk load na ho
-  if (!isLoaded) return null;
-
+  // Agar profile already complete hai, toh yahan kya kar raha hai? Wapas Chat pe bhejo!
+  if (dbUser?.isProfileComplete) {
+    redirect("/chat");
+  }
   return (
     <main className="flex w-full bg-background flex-col">
       <Navbar />
