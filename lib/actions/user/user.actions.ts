@@ -2,6 +2,7 @@
 
 import User from "@/models/user.model";
 import dbConnect from "@/lib/dbConnect";
+import { inngest } from "@/lib/inngest/client";
 
 // ==========================================
 // 🚀 CREATE USER (Triggered by Clerk Webhook)
@@ -48,7 +49,7 @@ export const deleteUser = async (clerkId: string) => {
   try {
     await dbConnect();
     console.log(`🟡 Action :: deleteUser started for ClerkID: ${clerkId}`);
-    
+
     if (!clerkId) throw new Error("clerkId is required for deletion");
 
     const deletedUser = await User.findOneAndDelete({ clerkId });
@@ -110,7 +111,21 @@ export const updateUser = async (clerkId: string, updateData: any) => {
       return { success: false, message: "User update failed, not found." };
     }
 
-    console.log("✅ Action :: User updated successfully.");
+
+    // Inngest Event Fire
+    console.log("🚀 Firing Inngest Event: app/user.onboarded");
+
+    await inngest.send({
+      name: "app/user.onboarded",
+      data: {
+        userId: updatedUser._id.toString(),
+        birthDetails: updatedUser.birthDetails,
+        gender: updatedUser.gender,
+        relationshipStatus: updatedUser.relationshipStatus,
+      },
+    });
+
+    console.log("✅ Action :: User updated and event dispatched.");
     return { success: true, data: JSON.parse(JSON.stringify(updatedUser)) };
   } catch (error: any) {
     console.error("❌ Action :: ERROR in updateUser:", error.message);

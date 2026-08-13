@@ -26,15 +26,15 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
 
-  const dbUser = await getFullMongoUser();
+  // const dbUser = await getFullMongoUser();
 
-  // Agar user DB mein nahi hai, ya profile adhoori hai -> seedha Onboarding pe bhejo
-  if (!dbUser) {
-    redirect("/login")
-  }
-  if (!dbUser.isProfileComplete) {
-    redirect("/onboarding");
-  }
+  // // Agar user DB mein nahi hai, ya profile adhoori hai -> seedha Onboarding pe bhejo
+  // if (!dbUser) {
+  //   redirect("/login")
+  // }
+  // if (!dbUser.isProfileComplete) {
+  //   redirect("/onboarding");
+  // }
   return (
     <html
       lang="en"

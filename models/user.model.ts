@@ -11,24 +11,26 @@ export interface IUser extends Document {
 
   // 💰 Token & Monetization System
   tokenBalance: number;
-  totalTokensUsed: number;   // Analytics ke liye ki user kitna active hai
-  planType: "free" | "pro";  // Future mein subscription lane ke liye
+  totalTokensUsed: number; // Analytics ke liye ki user kitna active hai
+  planType: "free" | "pro"; // Future mein subscription lane ke liye
 
   // 🔮 Core Astrology Data
   birthDetails?: {
-    dob?: Date;              // String ki jagah Date object better query ke liye
-    tob?: string;            // Time of Birth (HH:MM format)
-    pob?: string;            // Place of Birth (City, State)
-    latitude?: number;       // Exact API calculations ke liye
-    longitude?: number;      
+    dob?: Date; // String ki jagah Date object better query ke liye
+    tob?: string; // Time of Birth (HH:MM format)
+    pob?: string; // Place of Birth (City, State)
+    latitude?: number; // Exact API calculations ke liye
+    longitude?: number;
   };
 
   // 🌟 Cached Astro Data (Taki baar-baar external API ko paise na dene padein)
   zodiacSigns?: {
-    sunSign?: string;        // Surya Rashi
-    moonSign?: string;       // Chandra Rashi (Vedic astrology ka base)
-    ascendant?: string;      // Lagna (Rising sign)
+    sunSign?: string; // Surya Rashi
+    moonSign?: string; // Chandra Rashi (Vedic astrology ka base)
+    ascendant?: string; // Lagna (Rising sign)
   };
+
+  kundliChartData?: any[];
 
   // 🎭 Personalization & GenZ Vibe
   gender?: "male" | "female" | "non-binary" | "other";
@@ -38,7 +40,7 @@ export interface IUser extends Document {
   // 🛠️ App State & Meta
   role: "user" | "admin";
   isProfileComplete: boolean; // Check karne ke liye ki user ne onboarding form bhara hai ya nahi
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -65,7 +67,7 @@ const UserSchema = new Schema<IUser>(
       latitude: { type: Number },
       longitude: { type: Number },
     },
-    
+
     // 🌟 Cached Zodiac
     zodiacSigns: {
       sunSign: { type: String },
@@ -75,8 +77,17 @@ const UserSchema = new Schema<IUser>(
 
     // 🎭 Personalization
     gender: { type: String, enum: ["male", "female", "non-binary", "other"] },
-    relationshipStatus: { type: String, enum: ["single", "taken", "complicated", "healing"] },
-    languagePref: { type: String, enum: ["english", "hinglish", "hindi"], default: "hinglish" },
+    relationshipStatus: {
+      type: String,
+      enum: ["single", "taken", "complicated", "healing"],
+    },
+    languagePref: {
+      type: String,
+      enum: ["english", "hinglish", "hindi"],
+      default: "hinglish",
+    },
+
+    kundliChartData: { type: [Schema.Types.Mixed], default: [] },
 
     // 🛠️ Meta
     role: { type: String, enum: ["user", "admin"], default: "user" },
@@ -84,7 +95,7 @@ const UserSchema = new Schema<IUser>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Prevent mongoose from recompiling the model in Next.js Serverless environment
