@@ -156,12 +156,37 @@ export const generateAndIndexKundli = inngest.createFunction(
         });
 
         const report = completion.choices[0].message.content || "";
+
         console.log(
           `✅ [Step 2] Report generated successfully. Total length: ${report.length} characters.`,
         );
         return report;
       },
     );
+
+    // 💾 STEP 2.5: Save AI Report to MongoDB
+    await step.run("save-report-to-db", async () => {
+      console.log(
+        `\n🟡 [Step 2.5] Saving detailed AI report to MongoDB for user ${userId}...`,
+      );
+
+      await dbConnect(); // Ensure DB connection
+
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { aiReport: detailedReport },
+        { new: true },
+      );
+
+      if (!updatedUser) {
+        throw new Error(
+          `User with ID ${userId} not found while saving report.`,
+        );
+      }
+
+      console.log(`✅ [Step 2.5] AI Report permanently saved to MongoDB!`);
+      return true;
+    });
 
     // 🔪 STEP 3: Chunking the Report
     const chunks = await step.run("chunk-report", async () => {
@@ -229,6 +254,30 @@ export const generateAndIndexKundli = inngest.createFunction(
         console.error("❌ ERROR: Vector array is empty. Nothing to upsert.");
       }
 
+      return true;
+    });
+
+    // 🏁 STEP 5: Mark Kundli as "READY" in MongoDB
+    await step.run("mark-kundli-ready", async () => {
+      console.log(
+        `\n🟡 [Step 5] Marking Kundli as READY for user ${userId}...`,
+      );
+
+      await dbConnect();
+
+      const finalUser = await User.findByIdAndUpdate(
+        userId,
+        { isKundliGenerated: true }, // 🔥 Flag ko true kar diya
+        { new: true },
+      );
+
+      if (!finalUser) {
+        throw new Error(
+          `User with ID ${userId} not found for final status update.`,
+        );
+      }
+
+      console.log(`✅ [Step 5] Kundli Matrix is now LIVE!`);
       return true;
     });
 

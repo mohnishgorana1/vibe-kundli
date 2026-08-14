@@ -31,6 +31,8 @@ export interface IUser extends Document {
   };
 
   kundliChartData?: any[];
+  aiReport?: string;
+  isKundliGenerated: boolean;
 
   // 🎭 Personalization & GenZ Vibe
   gender?: "male" | "female" | "non-binary" | "other";
@@ -88,7 +90,10 @@ const UserSchema = new Schema<IUser>(
     },
 
     kundliChartData: { type: [Schema.Types.Mixed], default: [] },
+    aiReport: { type: String },
+    isKundliGenerated: { type: Boolean, default: false },
 
+    
     // 🛠️ Meta
     role: { type: String, enum: ["user", "admin"], default: "user" },
     isProfileComplete: { type: Boolean, default: false }, // Login ke baad direct form pe bhejna agar false ho
