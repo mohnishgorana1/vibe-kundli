@@ -5,6 +5,7 @@ import User from "@/models/user.model";
 import DashboardClient from "@/components/dashboard/DashboardClient"
 import { getFullMongoUser } from "@/lib/helpers/auth";
 import Navbar from "@/components/Navbar";
+import Message from "@/models/message.model";
 
 export default async function DashboardPage() {
     const dbUser = await getFullMongoUser();
@@ -17,9 +18,20 @@ export default async function DashboardPage() {
 
     const serializedUser = JSON.parse(JSON.stringify(dbUser));
 
+    const chatHistory = await Message.find({ userId: dbUser._id })
+        .sort({ createdAt: 1 })
+        .lean(); // lean() se query fast hoti hai
+
+    // 2. Data serialize karo taaki Client Component ko pasand aaye
+    const initialMessages = chatHistory.map((message) => ({
+        id: message._id!.toString(),
+        role: message.role,
+        content: message.content
+    }));
+
     return (
         <main className="relative flex min-h-screen flex-col bg-background text-foreground overflow-x-hidden">
- 
+
             {/* Premium Conditional Rendering */}
             {!dbUser.isKundliGenerated ? (
                 // ⏳ THE LOADING STATE (While Inngest is working)
@@ -32,7 +44,7 @@ export default async function DashboardPage() {
                             <span className="text-3xl">✨</span>
                         </div>
                     </div>
-                    
+
                     <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-3 bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent">
                         Aligning Your Stars...
                     </h1>
@@ -42,7 +54,7 @@ export default async function DashboardPage() {
                 </div>
             ) : (
                 // 🌟 THE SUCCESS STATE (When Inngest is done)
-                <DashboardClient userData={serializedUser} />
+                <DashboardClient userData={serializedUser} initialMessages={initialMessages} />
             )}
         </main>
     );

@@ -97,7 +97,7 @@ function OverView({ userData, onSwitchToChat }: { userData: any, onSwitchToChat:
                         <div className="absolute -right-6 -top-6 text-8xl opacity-10">🧿</div>
                         <h3 className="font-bold text-lg text-primary mb-2 relative z-10">Need Guidance?</h3>
                         <p className="text-sm text-muted-foreground mb-6 relative z-10">Astro-G is ready to answer your specific questions regarding career, relationship, and timeline.</p>
-                        <button onClick={() => setActiveView("CHAT")} className="w-full py-3.5 bg-primary text-primary-foreground font-bold rounded-xl shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 relative z-10 flex items-center justify-center gap-2">
+                        <button onClick={() => onSwitchToChat("CHAT")} className="w-full py-3.5 bg-primary text-primary-foreground font-bold rounded-xl shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 relative z-10 flex items-center justify-center gap-2">
                             <span>Start Astro Chat</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
                         </button>

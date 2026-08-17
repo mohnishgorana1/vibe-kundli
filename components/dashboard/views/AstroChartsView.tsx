@@ -193,7 +193,7 @@ export default function AstroChartsView({ userData }: { userData: any }) {
   const maitriData = getMaitriData();
 
   return (
-    <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500 pb-10">
+    <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500 pb-10 ">
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">Astro Charts & Analysis</h1>
         <p className="text-muted-foreground text-sm mt-1">Deep dive into your planetary alignments and cosmic forces.</p>
