@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/user.model";
-import DashboardClient from "@/components/DashboardClient";
+import DashboardClient from "@/components/dashboard/DashboardClient"
 import { getFullMongoUser } from "@/lib/helpers/auth";
 import Navbar from "@/components/Navbar";
 
@@ -19,9 +19,7 @@ export default async function DashboardPage() {
 
     return (
         <main className="relative flex min-h-screen flex-col bg-background text-foreground overflow-x-hidden">
-            {/* Navbar HAMESHA dikhega */}
-            <Navbar /> 
-
+ 
             {/* Premium Conditional Rendering */}
             {!dbUser.isKundliGenerated ? (
                 // ⏳ THE LOADING STATE (While Inngest is working)

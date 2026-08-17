@@ -32,12 +32,22 @@ export interface IUser extends Document {
 
   kundliChartData?: any[];
   aiReport?: string;
+  freeQueries?: {
+    id: string;
+    question: string;
+    answer: string;
+  }[];
   isKundliGenerated: boolean;
 
   // 🎭 Personalization & GenZ Vibe
   gender?: "male" | "female" | "non-binary" | "other";
   relationshipStatus?: "single" | "taken" | "complicated" | "healing"; // Roast karne mein kaam aayega
   languagePref: "english" | "hinglish" | "hindi"; // User kis bhasha mein chat chahta hai
+
+  lifeEvents?: {
+    fact: string;
+    createdAt: Date;
+  }[];
 
   // 🛠️ App State & Meta
   role: "user" | "admin";
@@ -91,9 +101,21 @@ const UserSchema = new Schema<IUser>(
 
     kundliChartData: { type: [Schema.Types.Mixed], default: [] },
     aiReport: { type: String },
+    freeQueries: [
+      {
+        id: { type: String },
+        question: { type: String },
+        answer: { type: String },
+      },
+    ],
     isKundliGenerated: { type: Boolean, default: false },
+    lifeEvents: [
+      {
+        fact: { type: String },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
 
-    
     // 🛠️ Meta
     role: { type: String, enum: ["user", "admin"], default: "user" },
     isProfileComplete: { type: Boolean, default: false }, // Login ke baad direct form pe bhejna agar false ho

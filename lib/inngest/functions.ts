@@ -132,8 +132,8 @@ export const generateAndIndexKundli = inngest.createFunction(
       return true;
     });
 
-    // 🤖 STEP 2: Generate Detailed Report via OpenAI
-    const detailedReport = await step.run(
+    // 🤖 STEP 2: Generate Report & 3 Free Queries (JSON FORMAT) via OPENAI
+    const { aiReport, freeQueries } = await step.run(
       "generate-openai-report",
       async () => {
         console.log(
@@ -146,21 +146,44 @@ export const generateAndIndexKundli = inngest.createFunction(
           astroData,
         );
 
+        // We instruct OpenAI to strictly return JSON containing both the report and the queries
+        // 🔥 THE UPGRADE: Added instructions for detailed answers and astrological reasoning
+        // 🔥 THE UPGRADE: Strict JSON Array forcing EXACTLY 3 items & Markdown answers
+        const jsonSystemPrompt = `${prompts.system}\n\nIMPORTANT: You must output ONLY a raw JSON object with EXACTLY two keys:
+      1. "report": A long Markdown string containing the detailed deep Kundli reading.
+      2. "freeQueries": A JSON array containing EXACTLY 3 objects (You MUST provide 3, not 1). Each object must have an "id" (e.g., "q1", "q2", "q3"), a "question", and an "answer".
+      
+      RULES FOR "freeQueries" ANSWERS:
+      - EXACTLY 3 QUERIES: Generate 3 entirely different questions covering different life aspects (e.g., Career, Marriage, Wealth).
+      - MARKDOWN FORMATTING: The "answer" MUST be beautifully formatted in Markdown. Use **bold text** for emphasis, proper paragraph breaks (\\n\\n), and bullet points (-) for readability.
+      - LENGTH & DEPTH: The "answer" MUST be detailed and comprehensive (at least 2-3 paragraphs long). 
+      - ASTROLOGICAL REASONING: You MUST explicitly explain the astrological reasoning behind the answer based on their specific chart (e.g., "Because your Sun is in the 10th house aspected by Mars...").
+      - SIMPLICITY: Write in simple, practical English.
+      - REMEDY: At the end of every answer, provide a simple, actionable remedy using a Markdown bulleted list.`;
+
         const completion = await openai.chat.completions.create({
           model: "gpt-4o-mini",
+          response_format: { type: "json_object" }, // Ensures output is strictly JSON
           messages: [
-            { role: "system", content: prompts.system },
+            { role: "system", content: jsonSystemPrompt },
             { role: "user", content: prompts.user },
           ],
-          temperature: 0.3, // Lower temperature to strictly stick to facts and reduce hallucination
+          temperature: 0.4,
         });
 
-        const report = completion.choices[0].message.content || "";
+        const rawResponse = completion.choices[0].message.content || "{}";
+        const parsedData = JSON.parse(rawResponse);
 
         console.log(
-          `✅ [Step 2] Report generated successfully. Total length: ${report.length} characters.`,
+          `✅ [Step 2] Generated AI Report length: ${parsedData.report?.length} chars.`,
         );
-        return report;
+        console.log(
+          `✅ [Step 2] Generated ${parsedData.freeQueries?.length} personalized queries.`,
+        );
+        return {
+          aiReport: parsedData.report || "",
+          freeQueries: parsedData.freeQueries || [],
+        };
       },
     );
 
@@ -170,11 +193,11 @@ export const generateAndIndexKundli = inngest.createFunction(
         `\n🟡 [Step 2.5] Saving detailed AI report to MongoDB for user ${userId}...`,
       );
 
-      await dbConnect(); // Ensure DB connection
+      await dbConnect();
 
       const updatedUser = await User.findByIdAndUpdate(
         userId,
-        { aiReport: detailedReport },
+        { aiReport: aiReport, freeQueries: freeQueries },
         { new: true },
       );
 
@@ -190,19 +213,16 @@ export const generateAndIndexKundli = inngest.createFunction(
 
     // 🔪 STEP 3: Chunking the Report
     const chunks = await step.run("chunk-report", async () => {
-      console.log(
-        `\n🟡 [Step 3] Splitting the generated report into semantic chunks...`,
-      );
-
-      const splitChunks = detailedReport
-        .split("\n\n") // Split by paragraphs
-        .map((chunk) => chunk.trim())
-        .filter((chunk) => chunk.length > 50); // Remove very small or empty fragments
+      const splittedChunks = aiReport
+        .split("\n\n")
+        .map((chunk: string) => chunk.trim())
+        .filter((chunk: string) => chunk.length > 50);
 
       console.log(
-        `✅ [Step 3] Report split into ${splitChunks.length} chunks.`,
+        `✅ [Step 3] AI Report split into ${splittedChunks.length} chunks.`,
       );
-      return splitChunks;
+
+      return splittedChunks;
     });
 
     // 🔢 STEP 4: Embeddings & Pinecone Upsert
@@ -267,7 +287,7 @@ export const generateAndIndexKundli = inngest.createFunction(
 
       const finalUser = await User.findByIdAndUpdate(
         userId,
-        { isKundliGenerated: true }, // 🔥 Flag ko true kar diya
+        { isKundliGenerated: true },
         { new: true },
       );
 

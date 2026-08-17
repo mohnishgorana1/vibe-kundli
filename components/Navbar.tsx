@@ -22,10 +22,10 @@ export default function Navbar() {
           <div className="h-8 w-8 animate-pulse rounded-lg bg-subtle"></div>
         ) : !isSignedIn ? (
           <Link
-            href="/login"
+            href="/signup"
             className="flex h-8 items-center rounded-lg border border-subtle bg-panel px-4 text-[13px] font-medium text-txt transition-all hover:bg-input hover:text-primary"
           >
-            Sign in
+            Sign Up
           </Link>
         ) : (
           <div className="flex items-center gap-4">
