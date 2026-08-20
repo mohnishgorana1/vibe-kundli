@@ -93,7 +93,7 @@ function OverView({ userData, onSwitchToChat }: { userData: any, onSwitchToChat:
                     </div>
 
                     {/* Chat Call To Action */}
-                    <div className="bg-gradient-to-br from-primary/15 via-primary/5 to-transparent border border-primary/20 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+                    <div className="bg-linear-to-br from-primary/15 via-primary/5 to-transparent border border-primary/20 rounded-2xl p-6 shadow-sm relative overflow-hidden">
                         <div className="absolute -right-6 -top-6 text-8xl opacity-10">🧿</div>
                         <h3 className="font-bold text-lg text-primary mb-2 relative z-10">Need Guidance?</h3>
                         <p className="text-sm text-muted-foreground mb-6 relative z-10">Astro-G is ready to answer your specific questions regarding career, relationship, and timeline.</p>

@@ -12,7 +12,7 @@ import Logo from "../Logo";
 
 export default function DashboardClient({ userData, initialMessages }: { userData: any; initialMessages: any[] }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeView, setActiveView] = useState<string>("OVERVIEW");
+  const [activeView, setActiveView] = useState<string>("CHAT");
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -39,8 +39,8 @@ export default function DashboardClient({ userData, initialMessages }: { userDat
       case "CHARTS": return <AstroChartsView userData={userData} />;
       case "AI_REPORT": return <AIKundliView aiReport={userData.aiReport} />
       case "QUERIES": return <CosmicQueriesTab freeQueries={userData.freeQueries} onSwitchToChat={setActiveView} />
-      case "CHAT": return <AstroChatView userData={userData} initialMessages={initialMessages} />;
-      case "OVERVIEW": default: return <OverView userData={userData} onSwitchToChat={setActiveView} />
+      case "OVERVIEW": return <OverView userData={userData} onSwitchToChat={setActiveView} />
+      case "CHAT": default: return <AstroChatView userData={userData} initialMessages={initialMessages} />;
     }
   };
 
@@ -93,7 +93,7 @@ export default function DashboardClient({ userData, initialMessages }: { userDat
 
         </nav>
 
-        <main className={`flex-1 overflow-y-auto ${activeView === "CHAT" ? "" : "p-4 md:p-8 lg:p-10"} scrollbar-thin`}>
+        <main className={`flex-1 overflow-y-auto ${activeView === "CHAT" ? "" : ""} scrollbar-thin`}>
           {renderActiveView()}
         </main>
       </div>

@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import React from "react";
-import { Sparkles, Moon } from "lucide-react";
 
 interface LogoProps {
   showText?: boolean;
@@ -8,7 +7,7 @@ interface LogoProps {
   className?: string;
 }
 
-export default function Logo({ showText = true, textSize = "16px", className }: LogoProps) {
+export default function Logo({ showText = true, textSize = "20px", className }: LogoProps) {
   const sizeClass = {
     "12px": "text-xs",
     "16px": "text-base",
@@ -19,20 +18,33 @@ export default function Logo({ showText = true, textSize = "16px", className }: 
   }[textSize];
 
   return (
-    <div className={cn("flex items-center gap-2.5 group cursor-pointer", className)}>
-      {/* ✨ ANIMATED COSMIC ICON BOX */}
-      <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-inner">
-        {/* Sparkle (Top Right) */}
-        <Sparkles className="absolute top-1.5 right-1.5 h-4 w-4 text-primary transition-transform duration-300 group-hover:scale-125" />
-        {/* Moon (Bottom Left) */}
-        <Moon className="absolute bottom-1.5 left-1.5 h-4 w-4 text-foreground transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:translate-y-0.5" />
+    <div className={cn("flex items-center gap-1.5 group cursor-pointer", className)}>
+      
+      {/* 🌌 PREMIUM COSMIC KUNDLI ICON */}
+      <div className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-500 group-hover:scale-105">
+        
+        {/* Background Glow */}
+        <div className="absolute inset-1 bg-primary/10 blur-sm rounded-full group-hover:bg-primary/20 transition-colors duration-500"></div>
+
+
+        {/* Outer Kundli Diamond */}
+        <div className="absolute h-6 w-6 bg-linear-to-br from-background to-secondary/80 border border-primary/50 rotate-45 rounded-sm shadow-inner group-hover:border-primary transition-colors duration-300"></div>
+
+        {/* Inner Glowing Diamond */}
+        <div className="absolute h-3 w-3 bg-linear-to-tr from-primary to-purple-500 rotate-45 rounded-xs shadow-[0_0_12px_rgba(var(--primary),1)] group-hover:rotate-225 transition-transform duration-700 ease-in-out"></div>
+
+        {/* Center Soul Pulse */}
+        <div className="absolute h-1 w-1 bg-white rounded-full animate-pulse shadow-[0_0_5px_#fff]"></div>
       </div>
 
-      {/* TEXT AREA */}
+      {/* ✨ PREMIUM TYPOGRAPHY */}
       {showText && (
-        <div className="flex items-center tracking-tight font-extrabold">
-          <span className={cn("text-foreground transition-colors group-hover:text-primary", sizeClass)}>
-            VibeKundli
+        <div className="flex items-center tracking-tight">
+          <span className={cn("font-extrabold text-foreground transition-colors duration-300", sizeClass)}>
+            Vibe
+          </span>
+          <span className={cn("font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400 ml-[1px]", sizeClass)}>
+            Kundli
           </span>
         </div>
       )}
